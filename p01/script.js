@@ -17,10 +17,15 @@ function showSuccess(input) {
   const formControl = input.parentElement;
   formControl.className = "form-control success";
 }
+// Function to check if email is valid
+function isValidEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+
 
 form.addEventListener("submit", function (e) {
   // Stop page from reloading on submit
-    console.log('aa');
   e.preventDefault();
 
   // Check to see if fields meet required field requirement
@@ -30,11 +35,13 @@ form.addEventListener("submit", function (e) {
   } else {
     showSuccess(username);
   } // Check if username input is empty
-  if (email.value === "") {
-    showError(email, "email is required");
-  } else {
-    showSuccess(email);
-  } // Check if username input is empty
+    if (email.value === "") {
+      showError(email, "Email is required");
+    } else if (!isValidEmail(email.value)) {
+      showError(email, "Email is invalid");
+    } else {
+      showSuccess(email);
+    }// Check if username input is empty
   if (password.value === "") {
     showError(password, "password is required");
   } else {
