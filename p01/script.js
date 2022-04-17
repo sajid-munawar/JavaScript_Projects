@@ -1,4 +1,3 @@
-// const form = document.getElementById('form');
 const form = document.getElementById("form");
 const username = document.getElementById("username");
 const email = document.getElementById("email");
@@ -8,7 +7,6 @@ const password2 = document.getElementById("password2");
 function showError(input, message) {
   const formControl = input.parentElement;
   formControl.className = "form-control error";
-
   const small = formControl.querySelector("small");
   small.innerText = message;
 }
@@ -17,39 +15,50 @@ function showSuccess(input) {
   const formControl = input.parentElement;
   formControl.className = "form-control success";
 }
-// Function to check if email is valid
-function isValidEmail(email) {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
+
+// Function to check if required fields have data
+function checkRequired(inputArray) {
+    inputArray.forEach(function(input) {
+        if ( input.value === '' ) {
+            console.log(input.id);
+            showError(input,`${getFieldId(input)} is required`);
+        } else {
+            showSuccess(input);
+        }
+    });
 }
 
-
-form.addEventListener("submit", function (e) {
-  // Stop page from reloading on submit
-  e.preventDefault();
-
-  // Check to see if fields meet required field requirement
-  // Check if username input is empty
-  if (username.value === "") {
-    showError(username, "Username is required");
-  } else {
-    showSuccess(username);
-  } // Check if username input is empty
-    if (email.value === "") {
-      showError(email, "Email is required");
-    } else if (!isValidEmail(email.value)) {
-      showError(email, "Email is invalid");
+// Function to check length of input field
+function checkLength(input, min, max) {
+    if ( input.value.length < min ) {
+        showError(input,`${getFieldId(input)} needs to be at least ${min} characters`);
+    } else if (input.value.length > max) {
+        showError(input,`${getFieldId(input)} needs to be less than ${max} characters`);
     } else {
-      showSuccess(email);
-    }// Check if username input is empty
-  if (password.value === "") {
-    showError(password, "password is required");
-  } else {
-    showSuccess(password);
-  } // Check if username input is empty
-  if (password2.value === "") {
-    showError(password2, "password2 is required");
-  } else {
-    showSuccess(password2);
-  }
-});
+        showSuccess(input);
+    }
+}
+
+// Function to check if password and confirm password match
+function checkPasswordsMatch(input1, input2) {
+    if ( input1.value !== input2.value ) {
+        showError(input2,"Passwords don't match")
+    }
+}
+
+// Function to get the id of the input field with proper case
+function getFieldId(input) {
+    return input.id.charAt(0).toUpperCase() + input.id.slice(1);
+}
+
+// This is an event listener for the form on submit
+form.addEventListener('submit',function(e) {
+    e.preventDefault();
+
+    checkRequired([username,email,password,password2]);
+    checkLength(username,3,10);
+    checkLength(password,6,30);
+    checkEmail(email);
+    checkPasswordsMatch(password,password2);
+
+})
